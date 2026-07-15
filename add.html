@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加入 NearU 好友</title>
+    <style>
+        body {
+            font-family: -apple-system, sans-serif;
+            background: #0F4C45;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            color: #212121;
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+            max-width: 340px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+        }
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: #0F4C45;
+            margin-bottom: 8px;
+        }
+        .sub {
+            color: #757575;
+            margin-bottom: 24px;
+        }
+        .nuid {
+            background: #EEF1EF;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            margin: 20px 0;
+        }
+        .btn {
+            display: block;
+            background: #0F4C45;
+            color: white;
+            text-decoration: none;
+            padding: 16px;
+            border-radius: 14px;
+            font-weight: bold;
+            margin-top: 12px;
+            font-size: 15px;
+        }
+        .btn-outline {
+            background: white;
+            color: #0F4C45;
+            border: 2px solid #0F4C45;
+        }
+        .info {
+            font-size: 12px;
+            color: #9E9E9E;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="logo">NearU</div>
+        <div class="sub">有人邀請你成為好友</div>
+
+        <div class="nuid" id="nuidDisplay">-</div>
+
+        <a class="btn" id="openAppBtn" href="#">
+            🚀 打開 NearU 加為好友
+        </a>
+
+        ://bpotato123.github.io/NearU/download.html">
+            📥 尚未安裝？下載 NearU
+        </a>
+
+        <div class="info">
+            點擊「打開 NearU」後，若沒安裝將自動跳轉下載頁面
+        </div>
+    </div>
+
+    <script>
+        // 從 URL 讀 nuid 參數
+        const params = new URLSearchParams(window.location.search);
+        const nuid = params.get('nuid') || '';
+
+        document.getElementById('nuidDisplay').textContent = nuid || '???';
+
+        // 深度連結（給 APP 用）
+        const deepLink = `nearu://add?nuid=${nuid}`;
+
+        // 「打開 NearU」按鈕
+        document.getElementById('openAppBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // 嘗試打開 APP
+            window.location.href = deepLink;
+
+            // 1.5 秒後如果還在網頁 → 表示沒安裝 → 跳下載頁
+            setTimeout(function() {
+                if (!document.hidden) {
+                    window.location.href = 'https://bpotato123.github.io/NearU/download.html';
+                }
+            }, 1500);
+        });
+
+        // 頁面剛載入時也自動嘗試打開 APP
+        window.addEventListener('DOMContentLoaded', function() {
+            if (nuid) {
+                // 使用 iframe hack 避免瀏覽器警告
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = deepLink;
+                document.body.appendChild(iframe);
+
+                setTimeout(function() {
+                    document.body.removeChild(iframe);
+                }, 1000);
+            }
+        });
+    </script>
+
+</body>
+</html>
