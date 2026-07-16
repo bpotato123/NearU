@@ -72,11 +72,17 @@
 
     <div class="card">
         <div class="logo">NearU</div>
-        <div class="sub" id="inviteText">有人邀請你成為好友</div>
+
+        <div class="sub" id="inviteText">
+            有人邀請你成為好友
+        </div>
+
         <div class="nuid" id="nuidDisplay">-</div>
+
         <a class="btn" id="openAppBtn" href="#">
             🚀 打開 NearU 加為好友
         </a>
+
         <a class="btn btn-outline" href="https://bpotato123.github.io/NearU/download.html">
             📥 尚未安裝？下載 NearU
         </a>
@@ -87,40 +93,50 @@
     </div>
 
     <script>
-const params = new URLSearchParams(window.location.search);
-const nuid = params.get('nuid') || '';
-const name = params.get('name') || '有人';
-document.getElementById('nuidDisplay').textContent = nuid || '???';
-// 修改邀請文字
-document.getElementById('inviteText').textContent =
-    `${name} 邀請你成為好友`;
-const deepLink = 'nearu://add?nuid=' + encodeURIComponent(nuid);
-document.getElementById('openAppBtn').addEventListener('click', function(e) {
-    e.preventDefault();
-    window.location.href = deepLink;
+        const params = new URLSearchParams(window.location.search);
 
-    setTimeout(function() {
-        if (!document.hidden) {
-            window.location.href =
-                'https://drive.google.com/drive/folders/1sMH5HUWTKv_Y4Aq3BRDj3sJ26V3g9C3l?usp=drive_link';
-        }
-    }, 1500);
-});
+        const nuid = params.get('nuid') || '';
+        const name = params.get('name') || '有人';
 
-window.addEventListener('DOMContentLoaded', function() {
-    if (nuid) {
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.src = deepLink;
-        document.body.appendChild(iframe);
+        // 顯示 NUID
+        document.getElementById('nuidDisplay').textContent = nuid || '???';
 
-        setTimeout(function() {
-            if (iframe.parentNode) {
-                document.body.removeChild(iframe);
+        // 顯示邀請者名稱
+        document.getElementById('inviteText').textContent =
+            `${name} 邀請你成為好友`;
+
+        // Deep Link
+        const deepLink = 'nearu://add?nuid=' + encodeURIComponent(nuid);
+
+        // 點擊按鈕
+        document.getElementById('openAppBtn').addEventListener('click', function (e) {
+            e.preventDefault();
+
+            window.location.href = deepLink;
+
+            setTimeout(function () {
+                if (!document.hidden) {
+                    window.location.href =
+                        'https://drive.google.com/drive/folders/1sMH5HUWTKv_Y4Aq3BRDj3sJ26V3g9C3l?usp=drive_link';
+                }
+            }, 1500);
+        });
+
+        // 自動嘗試開啟 App
+        window.addEventListener('DOMContentLoaded', function () {
+            if (nuid) {
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = deepLink;
+                document.body.appendChild(iframe);
+
+                setTimeout(function () {
+                    if (iframe.parentNode) {
+                        iframe.parentNode.removeChild(iframe);
+                    }
+                }, 1000);
             }
-        }, 1000);
-    }
-});
+        });
     </script>
 
 </body>
