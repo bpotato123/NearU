@@ -1,0 +1,20 @@
+<a class="btn" id="startBtn">
+    🚀 開始體驗 NearU
+</a>
+
+<script>
+document.getElementById("startBtn").onclick = function () {
+
+    // 開啟 Google Group
+    window.open(
+      "https://groups.google.com/d/forum/frank-testers-group",
+      "_blank"
+    );
+
+    // 5 秒後跳到 Play 測試頁
+    setTimeout(function () {
+        window.location.href =
+        "https://play.google.com/apps/testing/com.franklu.chatroom";
+    }, 5000);
+}
+</script>
