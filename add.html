@@ -88,52 +88,55 @@
         </div>
     </div>
 
-    <script>
-        const params = new URLSearchParams(window.location.search);
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const nuid = params.get('nuid') || '';
+    const name = params.get('name') || '有人';
 
-        const nuid = params.get('nuid') || '';
-        const name = params.get('name') || '有人';
+    // 顯示 NUID
+    document.getElementById('nuidDisplay').textContent = nuid || '???';
 
-        // 顯示 NUID
-        document.getElementById('nuidDisplay').textContent = nuid || '???';
+    // 顯示邀請者名稱
+    document.getElementById('inviteText').textContent =
+        `${name} 邀請你成為好友`;
 
-        // 顯示邀請者名稱
-        document.getElementById('inviteText').textContent =
-            `${name} 邀請你成為好友`;
+    const fallbackUrl =
+        'https://drive.google.com/drive/folders/1sMH5HUWTKv_Y4Aq3BRDj3sJ26V3g9C3l?usp=drive_link';
 
-        // Deep Link
-        const deepLink = 'nearu://add?nuid=' + encodeURIComponent(nuid);
+    // Deep Link（一般 scheme，給 iOS / 非 Chrome 瀏覽器用）
+    const deepLink = 'nearu://add?nuid=' + encodeURIComponent(nuid);
 
-        // 點擊按鈕
-        document.getElementById('openAppBtn').addEventListener('click', function (e) {
-            e.preventDefault();
+    // Android Chrome 專用寫法：有裝 App 會直接開 App，
+    // 沒裝會由 Chrome 自動導到 S.browser_fallback_url，不用自己猜時間，最穩定
+    function buildIntentUrl() {
+        return 'intent://add?nuid=' + encodeURIComponent(nuid) +
+            '#Intent;scheme=nearu;package=com.franklu.chatroom;' +
+            'S.browser_fallback_url=' + encodeURIComponent(fallbackUrl) + ';end';
+    }
 
-            window.location.href = deepLink;
+    // 點擊按鈕
+    document.getElementById('openAppBtn').addEventListener('click', function (e) {
+        e.preventDefault();
 
-            setTimeout(function () {
-                if (!document.hidden) {
-                    window.location.href =
-                        'https://drive.google.com/drive/folders/1sMH5HUWTKv_Y4Aq3BRDj3sJ26V3g9C3l?usp=drive_link';
-                }
-            }, 1500);
-        });
+        const ua = navigator.userAgent;
+        const isAndroidChrome = /Android/i.test(ua) && /Chrome/i.test(ua);
 
-        // 自動嘗試開啟 App
-        window.addEventListener('DOMContentLoaded', function () {
-            if (nuid) {
-                const iframe = document.createElement('iframe');
-                iframe.style.display = 'none';
-                iframe.src = deepLink;
-                document.body.appendChild(iframe);
+        if (isAndroidChrome) {
+            // Android Chrome：intent:// 自帶 fallback，最可靠
+            window.location.href = buildIntentUrl();
+            return;
+        }
 
-                setTimeout(function () {
-                    if (iframe.parentNode) {
-                        iframe.parentNode.removeChild(iframe);
-                    }
-                }, 1000);
+        // 其他瀏覽器（iOS Safari、Android 上非 Chrome 等）：
+        // 用「嘗試開 scheme + 設定逾時回退」的傳統做法
+        window.location.href = deepLink;
+        setTimeout(function () {
+            if (!document.hidden) {
+                window.location.href = fallbackUrl;
             }
-        });
-    </script>
+        }, 1500);
+    });
+</script>
 
 </body>
 </html>
